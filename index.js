@@ -14,7 +14,7 @@ global.Nekoname = process.env.NAME || "Neko";
 global.BASE_URL = `https://weeb-api-neko.onrender.com/weeb/api/`;
 global.prefix = "!";
 global.owner = process.env.OWNER || "917047584741";
-global.NUMBER = process.env.NUMBER || "919609421243";
+global.NUMBER = process.env.NUMBER || "917047584741";
 global.waitMesaage = "*_Wait A Minute_*";
 global.DB = process.env.MONGO_DB;
 
