@@ -1,6 +1,4 @@
-import Baileys,{
-  useMultiFileAuthState,
-} from '@whiskeysockets/baileys'
+import Baileys from '@whiskeysockets/baileys'
 import pino from 'pino';
 import mongoose from 'mongoose';
 import express from 'express';

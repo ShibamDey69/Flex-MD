@@ -5,7 +5,7 @@ export default {
   description: "To ban any user or group use this command..!!",
   run: async (Neko, m, {  isGroup, args, groupId, quoted, isOwner, isMe,nul }) => {
     try {
-      if (!isOwner || !isMe) return m.reply('edit', nul, `*_Only Owner Can Use this command...!_*`);
+      if ((isOwner === false) && (isMe === false)) return m.reply('edit', nul, `*_Only Owner Can Use this command...!_*`);
       let senderRegex = /^@\d{12}$/;
       if (isGroup) {
         let Group = await Neko.GroupDb.getGroup(groupId);
