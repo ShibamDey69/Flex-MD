@@ -1,19 +1,13 @@
 import { DisconnectReason } from '@whiskeysockets/baileys'
 import { Boom } from '@hapi/boom';
-import fs from 'node:fs';
-let folder = "./Auth-Info"
-let clearState = () => {
-  if (fs.existsSync(folder)) {
-    fs.rmdirSync(folder, { recursive: true, })
-  }
-}
-export default async function WaConnection(update, StartNeko) {
+
+export default async function WaConnection(update, StartNeko,clearState) {
 
   const { connection, lastDisconnect } = update;
 
   // If connection is open then send a message 
   if (connection === "open") {
-    console.log(`Connected to WhatsApp...!!, Master ${Nekoname}!!!`);
+    console.log(`Connected to WhatsApp...!!, Master !!!`);
   }
 
   // If connection is closed then show an error in console

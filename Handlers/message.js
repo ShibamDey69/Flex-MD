@@ -1,15 +1,12 @@
 import { getContentType } from '@whiskeysockets/baileys';
 import fs from "node:fs";
 import fetch from 'node-fetch';
-import User from '../models/user.js';
-import Group from '../models/groups.js';
 import cooldown from '../utils/cooldown.js';
-import { UserDbFunctions,GroupDbFunctions } from '../utils/dbFunctions.js';
+
 import checkCreateGroup from '../utils/checkCreateGroup.js';
 import statusCollector from "./status.js";
 import AntilinkFunc from '../utils/antilink.js';
-let UserDb = new UserDbFunctions(User);
-let GroupDb = new GroupDbFunctions(Group);
+
 
 let MessageHandle = async (m, Neko,CommandList) => {
   try {
@@ -162,7 +159,7 @@ let MessageHandle = async (m, Neko,CommandList) => {
 
     if (!isCmd) return;
   
-    let user = await UserDb.getUser(sender.includes(":")?sender.split(":")[0]:sender.split("@")[0])
+    let user = await Neko.UserDb.getUser(sender.includes(":")?sender.split(":")[0]:sender.split("@")[0])
 
     if (!user) return m.messages[0].reply("text", null, `*_User not found...!_*\n
     To use this bot you have to register first...!\n
@@ -184,7 +181,7 @@ let MessageHandle = async (m, Neko,CommandList) => {
                 await react(Command?.react || "💖")
      let nul = await m.messages[0].reply("text", null, `*_Processing_*`)
                 return await Command.run(Neko, m.messages[0], {nul,
-mentionTag, name, sender, gcMeta, gcName, args, from,cmdName, body, quoted, text, viewonce, isGroup, isQuoted, isMe, messageType, fetchF,Admins,isMeAdmin,isAdmin,GroupDb,UserDb, isOwner,groupId,participants
+mentionTag, name, sender, gcMeta, gcName, args, from,cmdName, body, quoted, text, viewonce, isGroup, isQuoted, isMe, messageType, fetchF,Admins,isMeAdmin,isAdmin,isOwner,groupId,participants
                 })
         } else {
         await react("🚫")

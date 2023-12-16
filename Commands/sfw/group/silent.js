@@ -5,23 +5,23 @@ export default {
   category: "Group",
   usage: "antilink",
   run: async (Neko, m,
-    { isAdmin, isGroup, GroupDb, from, args, isMe, isOwner,nul }
+    { isAdmin, isGroup, from, args, isMe, isOwner,nul }
   ) => {
     try {
       if (!isGroup) return m.reply("edit", nul, "*_This Command is only for Groups_*");
 
       if (!isAdmin && !(isMe || isOwner)) return m.reply("edit", nul, "*_Only Admin Can Use this Command...!_*");
 
-      let Group = await GroupDb.getGroup(from);
+      let Group = await Neko.GroupDb.getGroup(from);
 
       if (Group) {
         if (!Group.isSilent && (args === "on")) {
-          await GroupDb.setGcSilent(from, true);
+          await Neko.GroupDb.setGcSilent(from, true);
           return m.reply("edit", nul, "*_Silent Enabled_*");
         } else if (Group.isSilent && (args === "on")) {
           return m.reply('edit', nul, `*_Silent is already Enabled_*`)
         } else if (Group.isSilent && (args === "off")) {
-          await GroupDb.setGcSilent(from, false);
+          await Neko.GroupDb.setGcSilent(from, false);
           return m.reply("edit", nul, "*_Silent Disabled_*");
         } else if (!Group.isSilent && (args === "off")) {
           return m.reply("edit", nul, "*_Silent is already Disabled_*");

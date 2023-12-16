@@ -13,7 +13,7 @@ export default async function action(CommandList) {
           if (file.endsWith(".js")) {
             const module = await import(modulePath);
             CommandList.set(module.default?.name, module.default);
-            module.default?.alias.map((a) => CommandList.set(a, module.default));
+            module.default?.alias?.map((a) => CommandList.set(a, module.default));
           }
         }
       }

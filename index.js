@@ -9,12 +9,16 @@ import fs from 'node:fs';
 import WaConnection from "./Handlers/waconnection.js";
 import MessageHandle from './Handlers/message.js';
 import action from './utils/Commands.js';
-let folder = "./Auth-Info";
-global.Nekoname = process.env.NAME || "Neko";
+import { GroupDbFunctions, UserDbFunctions } from './utils/dbFunctions.js';
+import Group from './models/groups.js';
+import User from './models/user.js';
+import AuthenticationFromFile from './utils/authFile.js';
+let folder = "Auth-Info";
+
 global.BASE_URL = `https://weeb-api-neko.onrender.com/weeb/api/`;
 global.prefix = "!";
 global.owner = process.env.OWNER || "917047584741";
-global.NUMBER = process.env.NUMBER || "917047584741";
+global.NUMBER = process.env.NUMBER || "919609421243";
 global.waitMesaage = "*_Wait A Minute_*";
 global.DB = process.env.MONGO_DB;
 
@@ -40,7 +44,8 @@ const setupDatabase = async () => {
 
 const setupBaileysSocket = async () => {
   try {
-    const { state, saveCreds } = await useMultiFileAuthState(folder);
+    const SingleAuth = new AuthenticationFromFile(folder);
+    const { saveState,clearState,state } = await SingleAuth.useFileAuth(folder);
 
     const Neko = Baileys.makeWASocket({
       printQRInTerminal: false,
@@ -55,7 +60,7 @@ const setupBaileysSocket = async () => {
     if (actionMap) console.log(`${actionMap.size} Commands Loaded....!!`);
 
     if (!Neko.authState.creds.registered) {
-      const phoneNumber = process.env.NUMBER.replace(/[^0-9]/g, '');
+      const phoneNumber = NUMBER.replace(/[^0-9]/g, '');
 
       setTimeout(async () => {
         const code = await Neko.requestPairingCode(phoneNumber);
@@ -63,11 +68,15 @@ const setupBaileysSocket = async () => {
       }, 3000);
     }
 
-    Neko.ev.on('creds.update', saveCreds);
-    Neko.ev.on('connection.update', async (update) => WaConnection(update, StartNeko));
-    Neko.ev.on('messages.upsert', async (m) => MessageHandle(m, Neko, actionMap));
+Neko.GroupDb = new GroupDbFunctions(Group);
+Neko.UserDb = new UserDbFunctions(User);
+    Neko.ev.on('creds.update', saveState);
+    
+Neko.ev.on('connection.update', async (update) => WaConnection(update, StartNeko,clearState));
+
+Neko.ev.on('messages.upsert', async (m) => MessageHandle(m, Neko, actionMap));
   } catch (error) {
-    console.error('Error setting up Baileys socket:', error);
+    console.log(error);
   }
 };
 

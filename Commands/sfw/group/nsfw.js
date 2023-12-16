@@ -5,23 +5,23 @@ export default {
   category: "Group",
   usage: `${prefix}nsfw on`,
   run: async (Neko, m,
-    { isAdmin, isGroup, GroupDb, from, args, isMe, isOwner,nul }
+    { isAdmin, isGroup, from, args, isMe, isOwner,nul }
   ) => {
     try {
       if (!isGroup) return m.reply("edit", nul, "*_This Command is only for Groups_*");
 
       if (!isAdmin && !(isMe || isOwner)) return m.reply("edit", nul, "*_Only Admin Can Use this Command...!_*");
 
-      let Group = await GroupDb.getGroup(from);
+      let Group = await Neko.GroupDb.getGroup(from);
 
       if (Group) {
         if (!Group.isNsfw && (args === "on")) {
-          await GroupDb.setGcNsfw(from, true);
+          await Neko.GroupDb.setGcNsfw(from, true);
           return m.reply("edit", nul, "*_Nsfw Enabled_*");
         } else if (Group.isNsfw && (args === "on")) {
           return m.reply('edit', nul, `*_Nsfw is already Enabled_*`)
         } else if (Group.isNsfw && (args === "off")) {
-          await GroupDb.setGcNsfw(from, false);
+          await Neko.GroupDb.setGcNsfw(from, false);
           return m.reply("edit", nul, "*_Nsfw Disabled_*");
         } else if (!Group.isNsfw && (args === "off")) {
           return m.reply("edit", nul, "*_Nsfw is already Disabled_*");

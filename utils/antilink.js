@@ -1,4 +1,3 @@
-
 export default async function AntilinkFunc(Neko,m,sender,from,text,isMeAdmin) {
   try {
 

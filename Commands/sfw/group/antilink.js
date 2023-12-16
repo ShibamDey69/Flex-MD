@@ -5,7 +5,7 @@ export default {
   category: "Group",
   usage: "antilink",
   run: async (Neko, m,
-    { isMeAdmin, isAdmin, isGroup, GroupDb, from, args, isOwner, isMe,nul }
+    { isMeAdmin, isAdmin, isGroup, from, args, isOwner, isMe,nul }
   ) => {
     try {
       if (!isGroup) return m.reply("edit", nul, "*_This Command is only for Groups_*");
@@ -14,16 +14,16 @@ export default {
 
       if (!isMeAdmin) return m.reply("edit", nul, "*_Bot is not Admin_*");
 
-      let Group = await GroupDb.getGroup(from);
+      let Group = await Neko.GroupDb.getGroup(from);
 
       if (Group) {
         if (!Group.isAntilink && (args === "on")) {
-          await GroupDb.setGcAntilink(from, true);
+          await Neko.GroupDb.setGcAntilink(from, true);
           return m.reply("edit", nul, "*_Antilink Enabled_*");
         } else if (Group.isAntilink && (args === "on")) {
           return m.reply('edit', nul, `*_Antilink is already Enabled_*`)
         } else if (Group.isAntilink && (args === "off")) {
-          await GroupDb.setGcAntilink(from, false);
+          await Neko.GroupDb.setGcAntilink(from, false);
           return m.reply("edit", nul, "*_Antilink Disabled_*");
         } else if (!Group.isAntilink && (args === "off")) {
           return m.reply("edit", nul, "*_Antilink is already Disabled_*");
