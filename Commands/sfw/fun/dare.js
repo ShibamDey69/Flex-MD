@@ -1,6 +1,7 @@
 export default {
   name: "dare",
   alias: ["d"],
+  power:["member"],
   category: "fun",
   description: "Truth and Dare Game...this is dare command..!!",
   usage: 1,

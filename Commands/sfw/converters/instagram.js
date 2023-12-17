@@ -2,6 +2,7 @@ export default {
   name: "instagram",
   alias: ["ig"],
   category: "fun",
+  power:["member"],
   desc: "Download instagram media",
   usage: `${prefix}ig <URL>`,
   run: async (Neko, m, { args, fetchF,nul }) => {

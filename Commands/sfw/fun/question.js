@@ -1,6 +1,7 @@
 export default {
   name: "question",
   alias: ["ask"],
+  power:["member"],
   category: "fun",
   desc: "Bot will Ask a question ",
   run: async (Neko, m, { fetchF ,nul}) => {

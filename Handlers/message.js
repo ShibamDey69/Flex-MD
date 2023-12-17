@@ -142,7 +142,7 @@ let MessageHandle = async (m, Neko,CommandList) => {
 
     if (isGroup) {
       
-      let checkGroup = await checkCreateGroup(groupId, groupName);
+      let checkGroup = await checkCreateGroup(groupId, groupName,Neko);
       if (!checkGroup) return;
 
       if(isCmd) {

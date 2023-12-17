@@ -32,7 +32,7 @@ const GroupSchema = new mongoose.Schema({
   },
   isSilent: {
     type: Boolean,
-    default:false
+    default:true
   },
   reason: {
     type: String,

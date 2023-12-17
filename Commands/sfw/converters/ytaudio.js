@@ -1,6 +1,7 @@
 export default {
   name: "yta",
   alias: ["ytaudio"],
+  power:["member"],
   category: "converters",
   desc: "Download Youtube video",
   usage: `${prefix}ytv <URL>`,

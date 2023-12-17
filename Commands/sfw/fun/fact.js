@@ -1,6 +1,7 @@
 export default {
   name: "fact",
   alias: ["facts"],
+  power:["member"],
   category: "fun",
   description: "Tell us A random fact..!!",
   usage: 1,

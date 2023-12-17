@@ -2,6 +2,7 @@ export default {
   name: "facebook",
   alias: ["fb"],
   category: "fun",
+  power:["member"],
   desc: "Download facebook media",
   usage: `${prefix}fb <URL>`,
   run: async (Neko, m, { args, fetchF, nul }) => {

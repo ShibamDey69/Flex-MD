@@ -1,6 +1,7 @@
 export default {
   name: "truth",
-  alias: ["t", "tru", "tu"],
+  alias: ["t"],
+  power:["member"],
   category: "fun",
   description: "Truth and Dare Game...this is truth command..!!",
   usage: 1,

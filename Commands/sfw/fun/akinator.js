@@ -1,5 +1,5 @@
-//import { Aki } from 'aki-api';
-/*
+import { Aki } from 'aki-api';
+
 const region = 'en';
 const childMode = false;
 const proxy = undefined;
@@ -101,4 +101,3 @@ await m.reply('edit',nul,"*_Error!!_*");
       }
    }
 }
-*/

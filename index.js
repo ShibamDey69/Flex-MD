@@ -1,16 +1,16 @@
-import Baileys from '@whiskeysockets/baileys'
-import pino from 'pino';
-import mongoose from 'mongoose';
-import express from 'express';
-const app = express()
-import fs from 'node:fs';
+import Baileys from "@whiskeysockets/baileys";
+import pino from "pino";
+import mongoose from "mongoose";
+import express from "express";
+const app = express();
+import fs from "node:fs";
 import WaConnection from "./Handlers/waconnection.js";
-import MessageHandle from './Handlers/message.js';
-import action from './utils/Commands.js';
-import { GroupDbFunctions, UserDbFunctions } from './utils/dbFunctions.js';
-import Group from './models/groups.js';
-import User from './models/user.js';
-import AuthenticationFromFile from './utils/authFile.js';
+import MessageHandle from "./Handlers/message.js";
+import action from "./utils/Commands.js";
+import { GroupDbFunctions, UserDbFunctions } from "./utils/dbFunctions.js";
+import Group from "./models/groups.js";
+import User from "./models/user.js";
+import AuthenticationFromFile from "./utils/authFile.js";
 let folder = "Auth-Info";
 
 global.BASE_URL = `https://weeb-api-neko.onrender.com/weeb/api/`;
@@ -30,25 +30,28 @@ const setupDatabase = async () => {
     }
 
     if (!DB) {
-      throw new Error('Please add your MongoDB URL in the .env file or secrets...!');
+      throw new Error(
+        "Please add your MongoDB URL in the .env file or secrets...!",
+      );
     }
 
     await mongoose.connect(DB);
-    console.log('Connected to DB....!!');
+    console.log("Connected to DB....!!");
   } catch (error) {
-    console.error('Error setting up database:', error);
+    console.error("Error setting up database:", error);
   }
 };
 
 const setupBaileysSocket = async () => {
   try {
     const SingleAuth = new AuthenticationFromFile(folder);
-    const { saveState,clearState,state } = await SingleAuth.useFileAuth(folder);
+    const { saveState, clearState, state } =
+      await SingleAuth.useFileAuth(folder);
 
     const Neko = Baileys.makeWASocket({
       printQRInTerminal: false,
-      logger: pino({ level: 'silent' }),
-      browser: ['Chrome (Linux)', 'chrome', ''],
+      logger: pino({ level: "silent" }),
+      browser: ["Chrome (Linux)", "chrome", ""],
       auth: state,
     });
 
@@ -57,8 +60,8 @@ const setupBaileysSocket = async () => {
     const actionMap = await action(new Map());
     if (actionMap) console.log(`${actionMap.size} Commands Loaded....!!`);
 
-    if (!Neko.authState.creds.registered) {
-      const phoneNumber = NUMBER.replace(/[^0-9]/g, '');
+    if (!Neko.authState?.creds?.registered) {
+      const phoneNumber = NUMBER?.replace(/[^0-9]/g, "");
 
       setTimeout(async () => {
         const code = await Neko.requestPairingCode(phoneNumber);
@@ -66,31 +69,36 @@ const setupBaileysSocket = async () => {
       }, 3000);
     }
 
-Neko.GroupDb = new GroupDbFunctions(Group);
-Neko.UserDb = new UserDbFunctions(User);
-    Neko.ev.on('creds.update', saveState);
-    
-Neko.ev.on('connection.update', async (update) => WaConnection(update, StartNeko,clearState));
+    Neko.GroupDb = new GroupDbFunctions(Group);
+    Neko.UserDb = new UserDbFunctions(User);
+    Neko.ev.on("creds.update", saveState);
 
-Neko.ev.on('messages.upsert', async (m) => MessageHandle(m, Neko, actionMap));
+    Neko.ev.on("connection.update", async (update) =>
+      WaConnection(update, StartNeko, clearState),
+    );
+
+    Neko.ev.on("messages.upsert", async (m) =>
+      MessageHandle(m, Neko, actionMap),
+    );
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    throw Error("Error setting up Baileys Socket");
   }
 };
 
-  async function StartNeko  () {
+async function StartNeko() {
   try {
     await Promise.all([await setupDatabase(), await setupBaileysSocket()]);
   } catch (error) {
-    console.error('Error during setup:', error);
+    console.log(error);
+    throw Error("Error during setup");
   }
-};
+}
 
-// Run initial setup concurrently
-  StartNeko();
+StartNeko();
 
-app.get('/', (req, res) => {
-  res.status(200).send('ok');
+app.get("/", (req, res) => {
+  res.status(200).send("ok");
 });
 
 app.listen(PORT, () => {

@@ -85,6 +85,20 @@ class GroupDbFunctions {
   constructor(Group) {
     this.Group = Group;
   }
+  async createGroup(groupId, groupName) {
+    try {
+      let newGroup = await this.Group.create({
+        group_id: groupId,
+        name: groupName
+    })
+      return newGroup;
+    } catch (error) {
+      console.log(error)
+    throw new Error(error)
+  }
+}
+        
+      
   async getGroup(id) {
     try {
       let group = await this.Group.findOne({
@@ -232,6 +246,6 @@ class GroupDbFunctions {
     }
   }
 
-}
+} 
 
-export { UserDbFunctions, GroupDbFunctions }
+export { UserDbFunctions, GroupDbFunctions };
