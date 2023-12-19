@@ -7,20 +7,23 @@ import fs from "node:fs";
 import WaConnection from "./Handlers/waconnection.js";
 import MessageHandle from "./Handlers/message.js";
 import action from "./utils/Commands.js";
+import Verify from "./utils/verifyUser.js";
 import { GroupDbFunctions, UserDbFunctions } from "./utils/dbFunctions.js";
 import Group from "./models/groups.js";
 import User from "./models/user.js";
 import AuthenticationFromFile from "./utils/authFile.js";
+import checkCreateUser from './utils/checkCreateUser.js';
 let folder = "Auth-Info";
 
 global.BASE_URL = `https://weeb-api-neko.onrender.com/weeb/api/`;
 global.prefix = "!";
-global.owner = process.env.OWNER || "917047584741";
-global.NUMBER = process.env.NUMBER || "919609421243";
+global.owner = process.env.OWNER || "919609421243";
+global.NUMBER = process.env.NUMBER || "917047584741";
 global.waitMesaage = "*_Wait A Minute_*";
+global.api_key = "mta3elttdphm8ryd";
 global.DB = process.env.MONGO_DB;
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3021;
 
 const setupDatabase = async () => {
   try {
@@ -71,14 +74,26 @@ const setupBaileysSocket = async () => {
 
     Neko.GroupDb = new GroupDbFunctions(Group);
     Neko.UserDb = new UserDbFunctions(User);
+    Neko.Verify = new Verify(Neko);
+    Neko.proUsers = await Neko.Verify.proLoad();
+    Neko.banUsers = await Neko.Verify.banLoad();
+    Neko.adminUsers = await Neko.Verify.adminLoad();
+    console.log(`Loaded ${Neko.proUsers.length} Pro Users...!!`);
+    console.log(`Loaded ${Neko.banUsers.length} Banned Users...!!`);
+    console.log(`Loaded ${Neko.adminUsers.length} Admin Users...!!`);
+
+    
     Neko.ev.on("creds.update", saveState);
 
     Neko.ev.on("connection.update", async (update) =>
-      WaConnection(update, StartNeko, clearState),
+     await WaConnection(update, StartNeko, clearState),
     );
-
+    Neko.ev.on("chats.update", async (update) => {
+      console.log("gro",update);
+    })
+    Neko.ev.on('contacts.update', async (sender) => await checkCreateUser(sender,Neko))
     Neko.ev.on("messages.upsert", async (m) =>
-      MessageHandle(m, Neko, actionMap),
+      await MessageHandle(m, Neko, actionMap),
     );
   } catch (error) {
     console.error(error);

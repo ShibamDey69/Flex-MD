@@ -1,9 +1,35 @@
-
+import { v4 as uuidv4 } from 'uuid';
 
 class UserDbFunctions {
   constructor(User) {
     this.User = User;
   }
+
+  async createUser(sender,name) {
+    try {
+      let newUser = await this.User({
+        _uid:uuidv4(),
+        username:name,
+phone:Number(sender.includes(":")?sender.split(":")[0]:sender.split("@")[0])
+         }).save()
+      return newUser;
+    } catch (error) {
+      console.log(error)
+    throw new Error(error)
+  }
+}
+
+  
+  async filterUser(data) {
+    try {
+       let filter = await this.User.find(data);
+       return filter;
+    } catch (error) {
+       throw new Error(error)
+    }
+  }
+
+  
   async getUser(number) {
     try {
       let user = await this.User.findOne({
@@ -39,7 +65,7 @@ class UserDbFunctions {
       });
 
       if (premium) {
-        premium.isPremium = state;
+        premium.isPro = state;
         await premium.save();
       }
     } catch (error) {
@@ -78,6 +104,21 @@ class UserDbFunctions {
       throw new Error(error)
     }
   }
+
+  async setUsage(sender, usage = 1) {
+    try {
+      let usages = await this.User.findOne({
+        phone:Number(sender.includes(":")?sender.split(":")[0]:sender.split("@")[0])
+      })
+      if (usages) {
+        usages.usage = usages.usage + usage;
+        await usages.save();
+      }
+    } catch (error) {
+      console.log(error)
+      throw new Error(error)
+    }
+  }
 }
 
 
@@ -87,10 +128,10 @@ class GroupDbFunctions {
   }
   async createGroup(groupId, groupName) {
     try {
-      let newGroup = await this.Group.create({
+      let newGroup = await this.Group({
         group_id: groupId,
         name: groupName
-    })
+    }).save()
       return newGroup;
     } catch (error) {
       console.log(error)
@@ -98,7 +139,19 @@ class GroupDbFunctions {
   }
 }
         
-      
+
+  async filterGroup(data) {
+    try {
+       let filter = await this.Group.find(data);
+       return filter;
+      } catch (error) {
+      console.log(error);
+      throw new Error(error);
+    }
+  }
+    
+  
+  
   async getGroup(id) {
     try {
       let group = await this.Group.findOne({

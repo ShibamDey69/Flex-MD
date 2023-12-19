@@ -9,17 +9,7 @@ const userSchema = new mongoose.Schema({
   },
   username: {
     type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
+    default: "Anonymous"
   },
   phone: {
     type: Number,
@@ -34,34 +24,21 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  isPremium: {
+  isPro: {
     type: Boolean,
     default: false,
-  },
-  apiKey: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  usage: {
-    type: Array,
-    default: [],
-  },
-  created: {
-    type: String,
-    default: Date.now,
-  },
-  verified: {
-    type: Boolean,
-    default: false
   },
   isChatBot: {
     type: Boolean,
     default: false
   },
-  token: {
+  usage: {
+    type: Number,
+    default: 0
+  },
+  created: {
     type: String,
-    required: true,
+    default: Date.now,
   }
 });
 

@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "pm2 stop index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -16,9 +16,11 @@
     "@whiskeysockets/baileys": "^6.5.0",
     "aki-api": "^6.0.9",
     "axios": "^1.6.2",
+    "better-sqlite3": "^9.2.2",
     "express": "^4.18.2",
     "mongoose": "^8.0.3",
     "node-fetch": "^3.2.6",
-    "pino": "^8.16.2"
+    "pino": "^8.16.2",
+    "quick.db": "^9.1.7"
   }
 }

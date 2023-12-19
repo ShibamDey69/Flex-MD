@@ -1,7 +1,7 @@
 export default {
   name: "unban",
   alias: ["unbanned"],
-  category: "owner",
+  category: "mods",
   description: "To ban any user or group use this command..!!",
   run: async (
     Neko,
@@ -52,30 +52,16 @@ export default {
 
         let sender = await Neko.UserDb.getUser(user);
 
-        if (!sender.isBanned)
-          return Neko.sendMessage(
-            from,
-            {
-              text: `@${user} *_is already UnBanned from using this Bot..!!_*`,
-              mentions: senderRegex.test(args)
-                ? [args.split("@")[1] + "@s.whatsapp.net"]
-                : [quoted],
-            },
-            { quoted: m },
-          );
+        if (!sender.isBanned) {
+         let mess = `@${user} *_is already UnBanned from using this Bot..!!_*`
+          return m.reply("mention", `${user}@s.whatsapp.net`, mess);
+        }
 
         if (sender.isBanned) {
+        let mess = `@${user} *_has been UnBanned from using this bot_*`
           await Neko.UserDb.setBanned(user, false);
-          return Neko.sendMessage(
-            from,
-            {
-              text: `@${user} *_has been UnBanned from using this bot_*`,
-              mentions: senderRegex.test(args)
-                ? [args.split("@")[1] + "@s.whatsapp.net"]
-                : [quoted],
-            },
-            { quoted: m },
-          );
+  Neko.banUsers.splice(Neko.banUsers.indexOf(user),1);
+          return m.reply("mention", `${user}@s.whatsapp.net`, mess);
         }
       }
 
@@ -97,6 +83,7 @@ export default {
         if (sender.isBanned) {
           let mess = `@${user} *_have been UnBanned from using this bot...!!_*`;
           await Neko.UserDb.setBanned(user, false);
+  Neko.banUsers.splice(Neko.banUsers.indexOf(user),1);
           return m.reply("mention", `${user}@s.whatsapp.net`, mess);
         }
       }

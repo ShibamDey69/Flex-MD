@@ -1,12 +1,9 @@
 import { getContentType } from '@whiskeysockets/baileys';
-import fs from "node:fs";
 import fetch from 'node-fetch';
 import cooldown from '../utils/cooldown.js';
-
-import checkCreateGroup from '../utils/checkCreateGroup.js';
 import statusCollector from "./status.js";
 import AntilinkFunc from '../utils/antilink.js';
-
+import checkCreateGroup from '../utils/checkCreateGroup.js';
 
 let MessageHandle = async (m, Neko,CommandList) => {
   try {
@@ -143,8 +140,7 @@ let MessageHandle = async (m, Neko,CommandList) => {
     if (isGroup) {
       
       let checkGroup = await checkCreateGroup(groupId, groupName,Neko);
-      if (!checkGroup) return;
-
+      
       if(isCmd) {
       if (checkGroup.isSilent &&  !cmdName.includes("silent") ) return  
   }
@@ -159,20 +155,11 @@ let MessageHandle = async (m, Neko,CommandList) => {
 
     if (!isCmd) return;
   
-    let user = await Neko.UserDb.getUser(sender.includes(":")?sender.split(":")[0]:sender.split("@")[0])
+    let senderNumber = sender?.includes(":")?sender.split(":")[0]:sender.split("@")[0]
 
-    if (!user) return m.messages[0].reply("text", null, `*_User not found...!_*\n
-    To use this bot you have to register first...!\n
-    *_Caution_*: Don't forget to add your country code when You are putting the Number...!!!!\n
-  *_Register at:-_*\n
- *WebSite:-* https://weeb-api-neko.onrender.com`
-    )
-    
-    if (user?.isBanned) return m.messages[0].reply("text", null, `*_You are banned to use this bot_*...!`)
-    
-    global.api_key = user.apiKey;
+    if (Neko.banUsers?.includes(Number(senderNumber))) return m.messages[0].reply("text", null, `*_You are banned to use this bot_*...!`),await react("❌");
 
-    if (text?.endsWith(prefix)) return m.messages[0].reply("text", null, "*_No Such Command Exists!!_*");
+    if (text?.endsWith(prefix)) return m.messages[0].reply("text", null, "*_I am Alive, Baka!!_*"),await react("😁");
 
  async function CommandRun() {
       try {
@@ -180,8 +167,11 @@ let MessageHandle = async (m, Neko,CommandList) => {
     let Command = CommandList.get(cmdName)
                 await react(Command?.react || "💖")
      let nul = await m.messages[0].reply("text", null, `*_Processing_*`)
-                return await Command.run(Neko, m.messages[0], {nul,
-mentionTag, name, sender, gcMeta, gcName, args, from,cmdName, body, quoted, text, viewonce, isGroup, isQuoted, isMe, messageType, fetchF,Admins,isMeAdmin,isAdmin,isOwner,groupId,participants
+                return await Command.run(Neko, m.messages[0], {
+nul,mentionTag, name, sender, gcMeta, gcName, args, 
+from,cmdName, body, quoted, text, viewonce, isGroup,
+isQuoted, isMe, messageType, fetchF,Admins,isMeAdmin,
+        isAdmin,isOwner,groupId,participants
                 })
         } else {
         await react("🚫")

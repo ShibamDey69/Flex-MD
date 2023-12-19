@@ -2,7 +2,7 @@ export default {
   name: "silent",
   alias: ["silentgc"],
   desc: "Enable/Disable Silent in group",
-  category: "Group",
+  category: "mods",
   usage: "antilink",
   run: async (Neko, m,
     { isAdmin, isGroup, from, args, isMe, isOwner,nul }

@@ -1,7 +1,7 @@
 export default {
   name: "ban",
   alias: ["banned"],
-  category: "owner",
+  category: "mods",
   description: "To ban any user or group use this command..!!",
   run: async (
     Neko,
@@ -59,6 +59,7 @@ export default {
 
         if (!sender.isBanned) {
           await Neko.UserDb.setBanned(user, true);
+          Neko.banUsers.push(user);
           let mgs = `@${user} *_has been Banned from using this bot_*`;
           return m.reply("mention", mnton, mgs);
         }
@@ -82,6 +83,7 @@ export default {
         if (!sender.isBanned) {
           let mess = `@${user} *_have been Banned from using this bot...!_*`;
           await Neko.UserDb.setBanned(user, true);
+          Neko.banUsers.push(user);
           return m.reply("mention", `${user}@s.whatsapp.net`, mess);
         }
       }
