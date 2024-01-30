@@ -113,6 +113,14 @@
           "id": "6FC7C5735446CCAAF158A77AF0425991"
         },
         "messageTimestamp": 1706647634
+      },
+      {
+        "key": {
+          "remoteJid": "917047584741@s.whatsapp.net",
+          "fromMe": true,
+          "id": "1B2FF9CF831E1276379B6F18811AFDF0"
+        },
+        "messageTimestamp": 1706647648
       }
     ],
     "nextPreKeyId": 31,
@@ -436,7 +444,7 @@
               "baseKey": "BZMBTXirXIGZKNTAl5QpU2kb1KJbC355oJzATZEWcvcA",
               "baseKeyType": 2,
               "closed": -1,
-              "used": 1706647634168,
+              "used": 1706647648304,
               "created": 1706647554604,
               "remoteIdentityKey": "BSlWMqpBEsLAykt3BTRYhdkbg8xK06q9G16UbGRa38x7"
             },
@@ -450,8 +458,8 @@
               },
               "BbeewZXi7JwqxNRJlsPW2NC+puw+f2zQUJgBQ9BS7tQ1": {
                 "chainKey": {
-                  "counter": 5,
-                  "key": "iEYvmQzBebqAufjca3ipWA205GS8PjIsJMNFfO4SAXk="
+                  "counter": 6,
+                  "key": "iVl7D6XLWPak5BVRBEFgSabDvUkkv9XgSu9r8e6IR6w="
                 },
                 "chainType": 2,
                 "messageKeys": {}
