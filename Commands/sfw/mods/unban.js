@@ -9,7 +9,7 @@ export default {
     { from, isGroup, args, groupId, quoted, isOwner, isMe, nul },
   ) => {
     try {
-      if (!isOwner || !isMe)
+      if (!isOwner)
         return m.reply("edit", nul, `*_Only Owner Can Use this command...!_*`);
       let senderRegex = /^@\d{12}$/;
       if (isGroup) {
@@ -25,7 +25,7 @@ export default {
         if (Group.isBanned) {
           if (!quoted && !senderRegex.test(args)) {
             await Neko.GroupDb.setGcBanned(groupId, false);
-
+            Neko.banGc.splice(Neko.banGc.indexOf(groupId), 1);
             if (args.length > 5) {
               await Neko.GroupDb.setReason(groupId, args);
               return m.reply(

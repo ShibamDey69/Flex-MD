@@ -1,304 +1,382 @@
-import { v4 as uuidv4 } from 'uuid';
-
+import { v4 as uuidv4 } from "uuid";
+import { QuickDB } from "quick.db";
+import path, { join } from "path";
+const __dirname = path.resolve();
 class UserDbFunctions {
-  constructor(User) {
-    this.User = User;
+  constructor() {
+    this.path = (name) => join(__dirname, ".", "storage", `${name}.sqlite`);
+    this.User = new QuickDB({ filePath: this.path("user") });
   }
 
-  async createUser(sender,name) {
+  async getUser(sender, name) {
     try {
-      let newUser = await this.User({
-        _uid:uuidv4(),
-        username:name,
-phone:Number(sender.includes(":")?sender.split(":")[0]:sender.split("@")[0])
-         }).save()
+      this.Number = 
+        sender.includes(":")
+          ? sender.split(":")[0]
+          : sender.replace(/[^0-9]/g, "");    
+
+      let newUser =
+        (await this.User.get(this.Number)) ||
+        (await this.User.set(this.Number, {
+          _uid: uuidv4(),
+          username: name || "anonymous",
+          phone: this.Number,
+          isPro:false,
+          isBanned: false,
+          isMod: false,
+          isChatBot: false,
+          isSilent: false,
+          exp: 0,
+          os: "android",
+          rank: "rookie",
+        }));
       return newUser;
     } catch (error) {
-      console.log(error)
-    throw new Error(error)
-  }
-}
-
-  
-  async filterUser(data) {
-    try {
-       let filter = await this.User.find(data);
-       return filter;
-    } catch (error) {
-       throw new Error(error)
+      console.log(error);
+      throw new Error(error);
     }
   }
 
-  
-  async getUser(number) {
+  async filterUser(key, value) {
     try {
-      let user = await this.User.findOne({
-        phone: Number(number)
-      });
-      return user;
+      let users = await this.User.all();
+      let filter = users.filter((user) => user.value[key] === value);
+      return filter;
     } catch (error) {
-      console.log(error)
-      throw new Error(error)
+      throw new Error(error);
     }
   }
 
-  async setChatBot(number, state = true) {
+  async setChatBot(sender, state = true) {
     try {
-      let chatBot = await this.User.findOne({
-        phone: Number(number)
-      });
+      this.Number = 
+        sender.includes(":")
+          ? sender.split(":")[0]
+          : sender.replace(/[^0-9]/g, "");
 
-      if (chatBot) {
-        chatBot.isChatBot = state;
-        await chatBot.save();
+      let chatBot = await this.User.get(this.Number);
+
+      if (!chatBot) {
+        throw new Error("User not found");
       }
+      chatBot.isChatBot = state;
+      await this.User.set(this.Number, chatBot);
     } catch (error) {
-      console.log(error)
-      throw new Error(error)
+      console.log(error);
+      throw new Error(error);
     }
   }
 
-  async setPremium(number, state = true) {
+  async setPremium(sender, state = true) {
     try {
-      let premium = await this.User.findOne({
-        phone: Number(number)
-      });
+      this.Number = 
+        sender.includes(":")
+          ? sender.split(":")[0]
+          : sender.replace(/[^0-9]/g, "");
 
-      if (premium) {
-        premium.isPro = state;
-        await premium.save();
+      let premium = await this.User.get(this.Number);
+
+      if (!premium) {
+        throw new Error("User not found");
       }
+      premium.isPro = state;
+      await this.User.set(this.Number, premium);
     } catch (error) {
-      console.log(error)
-      throw new Error(error)
+      console.log(error);
+      throw new Error(error);
     }
   }
 
-  async setBanned(number, state = true) {
+  async setBanned(sender, state = true) {
     try {
-      let banned = await this.User.findOne({
-        phone: Number(number)
-      });
-      if (banned) {
-        banned.isBanned = state;
-        await banned.save();
+      this.Number = 
+        sender.includes(":")
+          ? sender.split(":")[0]
+          : sender.replace(/[^0-9]/g, "");
+
+      let banned = await this.User.get(this.Number);
+      if (!banned) {
+        throw new Error("User not found");
       }
+      banned.isBanned = state;
+      await this.User.set(this.Number, banned);
     } catch (error) {
-      console.log(error)
-      throw new Error(error)
+      console.log(error);
+      throw new Error(error);
     }
   }
 
-  async setAdmin(number, state = true) {
+  async setMod(sender, state = true) {
     try {
-      let admin = await this.User.findOne({
-        phone: Number(number)
-      });
+      this.Number = 
+        sender.includes(":")
+          ? sender.split(":")[0]
+          : sender.replace(/[^0-9]/g, "");
 
-      if (admin) {
-        admin.isAdmin = state;
-        await admin.save();
+      let mod = await this.User.get(this.Number);
+
+      if (!mod) {
+        throw new Error("User not found");
       }
+      mod.isAdmin = state;
+      await this.User.set(this.Number, mod);
     } catch (error) {
-      console.log(error)
-      throw new Error(error)
+      console.log(error);
+      throw new Error(error);
+    }
+  }
+
+  async setSilent(sender, state = true) {
+    try {
+      this.Number = 
+        sender.includes(":")
+          ? sender.split(":")[0]
+          : sender.replace(/[^0-9]/g, "");
+
+      let silent = await this.User.get(this.Number);
+
+      if (!silent) {
+        throw new Error("User not found");
+      }
+      silent.isAdmin = state;
+      await this.User.set(this.Number, silent);
+    } catch (error) {
+      console.log(error);
+      throw new Error(error);
     }
   }
 
   async setUsage(sender, usage = 1) {
     try {
-      let usages = await this.User.findOne({
-        phone:Number(sender.includes(":")?sender.split(":")[0]:sender.split("@")[0])
-      })
-      if (usages) {
-        usages.usage = usages.usage + usage;
-        await usages.save();
+      this.Number = 
+        sender.includes(":")
+          ? sender.split(":")[0]
+          : sender.replace(/[^0-9]/g, "");
+      let usages = await this.User.get(this.Number);
+      if (!usages) {
+        throw new Error("User not found");
       }
+      usages.usage = usages.usage + usage;
+      await this.User.set(this.Number, usages);
     } catch (error) {
-      console.log(error)
-      throw new Error(error)
-    }
-  }
-}
-
-
-class GroupDbFunctions {
-  constructor(Group) {
-    this.Group = Group;
-  }
-  async createGroup(groupId, groupName) {
-    try {
-      let newGroup = await this.Group({
-        group_id: groupId,
-        name: groupName
-    }).save()
-      return newGroup;
-    } catch (error) {
-      console.log(error)
-    throw new Error(error)
-  }
-}
-        
-
-  async filterGroup(data) {
-    try {
-       let filter = await this.Group.find(data);
-       return filter;
-      } catch (error) {
       console.log(error);
       throw new Error(error);
     }
   }
-    
+
+  async setExp(sender, exp = 1) {
+    try {
+      this.Number = 
+        sender.includes(":")
+          ? sender.split(":")[0]
+          : sender.replace(/[^0-9]/g, "");
+      let expss = await this.User.get(this.Number);
+      if (!expss) {
+        throw new Error("User not found");
+      }
+      expss.exp = expss.exp + exp;
+      await this.User.set(this.Number, expss);
+    } catch (error) {
+      console.log(error);
+      throw new Error(error);
+    }
+  }
+
+  async setRank(sender, rank = "rookie") {
+    try {
+      this.Number = 
+        sender.includes(":")
+          ? sender.split(":")[0]
+          : sender.replace(/[^0-9]/g, "");
+      let ranks = await this.User.get(this.Number);
+      if (!ranks) {
+        throw new Error("User not found");
+      }
+      ranks.rank = rank;
+      await this.User.set(this.Number, ranks);
+    } catch (error) {
+      console.log(error);
+      throw new Error(error);
+    }
+  }
+
+  async setOs(sender, os = "android") {
+    try {
+      this.Number = 
+        sender.includes(":")
+          ? sender.split(":")[0]
+          : sender.replace(/[^0-9]/g, "");
+      let oses = await this.User.get(this.Number);
+      if (!oses) {
+        throw new Error("User not found");
+      }
+      oses.os = os;
+      await this.User.set(this.Number, oses);
+    } catch (error) {
+      console.log(error);
+      throw new Error(error);
+    }
+  }
+}
+
+class GroupDbFunctions {
+  constructor() {
+    this.path = (name) => join(__dirname, ".", "storage", `${name}.sqlite`);
+    this.Group = new QuickDB({ filePath: this.path("group") });
+  }
+  async getGroup(groupId, groupName) {
+    try {
+      let newGroup = (await this.Group.get(groupId)) || (await this.Group.set(groupId,{
+        group_id: groupId,
+        name: groupName,
+        isBanned: false,
+        isChatBot: false,
+        isSilent: true,
+        isAntilink:false,
+        isAntiword:false,
+        isWelcome:false,
+        isNsfw:false,
+        isPro:false,
+        usage:0,
+        created: Date.now()
+      }));
+      return newGroup;
+    } catch (error) {
+      console.log(error);
+      throw new Error(error);
+    }
+  }
+
+   async filterGroup(key, value) {
+     try {
+        let groups = await this.Group.all();
+        let filter = groups.filter((group) => group.value.us[key] === value);
+        return filter;
+     } catch (error) {
+        throw new Error(error);
+     }
+   }
+
+   async setGcChatBot(groupId, state = true) {
+     try {
+        let chatBot = await this.Group.get(groupId);
+        if (!chatBot) {
+          throw new Error("Group not found");
+        }
+        chatBot.isChatBot = state;
+        await this.Group.set(groupId, chatBot);
+     } catch (error) {
+        throw new Error(error);
+     }
+   }
+
+   async setGcPremium(groupId, state = true) {
+     try {
+        let premium = await this.Group.get(groupId);
+        if (!premium) {
+          throw new Error("Group not found");
+        }
+        premium.isPro = state;
+        await this.Group.set(groupId, premium);
+     } catch (error) {
+        throw new Error(error);
+     }
+   }
+
+  async setGcBanned(groupId, state = true) {
+    try {
+      let banned = await this.Group.get(groupId);
+      if (!banned) {
+        throw new Error("Group not found");
+      }
+      banned.isBanned = state;
+      await this.Group.set(groupId, banned);
+    } catch (error) {
+      console.log(error);
+      throw new Error(error);
+    }
+  }
+
   
+  async setGcSilent(groupId, state = true) {
+    try {
+      let silent = await this.Group.get(groupId);
+      if (!silent) {
+        throw new Error("Group not found");
+      }
+      silent.isSilent = state;
+      await this.Group.set(groupId, silent);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async setGcAntilink(groupId, state = true) {
+    try {
+      let antilink = await this.Group.get(groupId);
+      if (!antilink) {
+        throw new Error("Group not found");
+      }
+      antilink.isAntilink = state;
+      await this.Group.set(groupId, antilink);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
   
-  async getGroup(id) {
+  async setGcAntiword(groupId, state = true) {
     try {
-      let group = await this.Group.findOne({
-        group_id: id
-      });
-      return group;
-    } catch (error) {
-      console.log(error)
-      throw new Error(error)
+      let antiword = await this.Group.get(groupId);
+      if (!antiword) {
+        throw new Error("Group not found");
+      }
+      antiword.isAntiword = state;
+      await this.Group.set(groupId, antiword);
+    } catch (error) { 
+      throw new Error(error);
     }
   }
 
-  async setGcBanned(id, state = true) {
+  async setGcWelcome(groupId, state = true) {
     try {
-      let banned = await this.Group.findOne({
-        group_id: id
-      });
-      if (banned) {
-        banned.isBanned = state;
-        await banned.save();
+      let welcome = await this.Group.get(groupId);
+      if (!welcome) {
+        throw new Error("Group not found");
       }
-
+      welcome.isWelcome = state;
+      await this.Group.set(groupId, welcome);
     } catch (error) {
-      console.log(error)
-      throw new Error(error)
+      throw new Error(error);
     }
   }
 
-  async setGcAntilink(id, state = true) {
+  async setGcNsfw(groupId, state = true) {
     try {
-      let antilink = await this.Group.findOne({
-        group_id: id
-      })
-      if (antilink) {
-        antilink.isAntilink = state;
-        await antilink.save();
+      let nsfw = await this.Group.get(groupId);
+      if (!nsfw) {
+        throw new Error("Group not found");
       }
+      nsfw.isNsfw = state;
+      await this.Group.set(groupId, nsfw);
     } catch (error) {
-      console.log(error)
-      throw new Error(error)
+      throw new Error(error);
     }
   }
 
-  async setGcAntibadword(id, state = true) {
+  async setGcUsage(groupId, usage = 1) {
     try {
-      let antibadword = await this.Group.findOne({
-        group_id: id
-      })
-      if (antibadword) {
-        antibadword.isAntibadword = state;
-        await antibadword.save();
+      let usages = await this.Group.get(groupId);
+      if (!usages) {
+        throw new Error("Group not found");
       }
-
+      usages.usage = usages.usage + usage;
+      await this.Group.set(groupId, usages);
     } catch (error) {
-      console.log(error)
-      throw new Error(error)
-    }
-  }
-
-  async setGcWelcome(id, state = true) {
-    try {
-      let welcome = await this.Group.findOne({
-        group_id: id
-      })
-      if (welcome) {
-        welcome.isWelcome = state;
-        await welcome.save();
-      }
-    } catch (error) {
-      console.log(error);
-      throw new Error(error)
-    }
-  }
-
-  async setGcNsfw(id, state = true) {
-    try {
-      let nsfw = await this.Group.findOne({
-        group_id: id
-      })
-      if (nsfw) {
-        nsfw.isNsfw = state;
-        await nsfw.save();
-      }
-    } catch (error) {
-      console.log(error);
-      throw new Error(error)
-    }
-  }
-
-  async setGcSilent(id, state = true) {
-    try {
-      let silent = await this.Group.findOne({
-        group_id: id
-      })
-      if (silent) {
-        silent.isSilent = state;
-        await silent.save();
-      }
-    } catch (error) {
-      console.log(error);
-      throw new Error(error)
-    }
-  }
-  async setGcChatBot(id, state = true) {
-    try {
-      let chatbot = await this.Group.findOne({
-        group_id: id
-      })
-      if (chatbot) {
-        chatbot.isChatBot = state;
-        await chatbot.save();
-      }
-    } catch (error) {
-      console.log(error);
-      throw new Error(error)
-    }
-  }
-  async setGcUsage(id, usage = 1) {
-    try {
-      let usages = await this.Group.findOne({
-        group_id: id
-      })
-      if (usages) {
-        usages.usage = usages.usage + usage;
-        await usages.save();
-      }
-    } catch (error) {
-      console.log(error)
-      throw new Error(error)
-    }
-  }
-
-  async setReason (id, reason) {
-    try {
-      let reasons = await this.Group.findOne({
-        group_id:id
-      })
-      if(reasons) {
-        reasons.reason = reason;
-      await reasons.save()
-      }
-    } catch (err) {
-      console.log(err)
-      throw new Error(err)
+      throw new Error(error);
     }
   }
 
 } 
+
 
 export { UserDbFunctions, GroupDbFunctions };

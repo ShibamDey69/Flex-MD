@@ -9,6 +9,10 @@ export default async function WaConnection(update, StartNeko, clearState) {
     console.log(`Connected to WhatsApp...!!, Master !!!`);
   }
 
+  if(connection === "connecting") {
+    console.log(`Connecting to Whatsapp...!!`);
+  }
+
   // If connection is closed then show an error in console
   if (connection === "close") {
     if (

@@ -6,10 +6,9 @@ export default {
   run: async (
     Neko,
     m,
-    { isGroup, args, groupId, quoted, isOwner, isMe, nul },
-  ) => {
+    { isGroup, args, groupId, quoted, isOwner, isMe, nul }) => {
     try {
-      if (isOwner === false && isMe === false)
+      if (!isOwner && !isMe)
         return m.reply("edit", nul, `*_Only Owner Can Use this command...!_*`);
       let senderRegex = /^@\d{12}$/;
       if (isGroup) {
@@ -20,12 +19,12 @@ export default {
           Group.isBanned &&
           !(quoted || senderRegex.test(args?.split(" ")[0] || args))
         )
-          return await m.reply("edit", null, mess);
+          return await m.reply("edit", nul, mess);
 
         if (!Group.isBanned) {
           if (!quoted && !senderRegex.test(args)) {
             await Neko.GroupDb.setGcBanned(groupId, true);
-
+            Neko.banGc.push(groupId);
             if (args.length > 5) {
               await Neko.GroupDb.setReason(groupId, args);
               return m.reply(

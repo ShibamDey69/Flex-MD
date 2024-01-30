@@ -17,11 +17,13 @@ export default {
       if (Group) {
         if (!Group.isSilent && (args === "on")) {
           await Neko.GroupDb.setGcSilent(from, true);
+          Neko.silentGc.push(from);
           return m.reply("edit", nul, "*_Silent Enabled_*");
         } else if (Group.isSilent && (args === "on")) {
           return m.reply('edit', nul, `*_Silent is already Enabled_*`)
         } else if (Group.isSilent && (args === "off")) {
           await Neko.GroupDb.setGcSilent(from, false);
+          Neko.silentGc.splice(Neko.silentGc.indexOf(from), 1);
           return m.reply("edit", nul, "*_Silent Disabled_*");
         } else if (!Group.isSilent && (args === "off")) {
           return m.reply("edit", nul, "*_Silent is already Disabled_*");

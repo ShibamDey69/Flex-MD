@@ -4,20 +4,24 @@ import cooldown from '../utils/cooldown.js';
 import statusCollector from "./status.js";
 import AntilinkFunc from '../utils/antilink.js';
 import checkCreateGroup from '../utils/checkCreateGroup.js';
-
+import '../config.js';
+console.log(owner);
 let MessageHandle = async (m, Neko,CommandList) => {
   try {
     
     const messageType = getContentType(m.messages[0].message);
 
-    let isMe = m.messages[0].key.fromMe
-    
-    const mentionTag = m.messages[0].message?.extendedTextMessage?.contextInfo?.participant
+    const isMe = m.messages[0].key.fromMe;
+
     const isGroup = m.messages[0].key.remoteJid.includes('@g.us');
 
-    const name = m.messages[0]['pushName'];
-
     const sender = isMe?Neko.user.id.replace(":2",""):(isGroup ? m.messages[0].key.participant : m.messages[0].key.remoteJid);
+    
+    const senderNumber = sender?.includes(":")?sender.split(":")[0]:sender.split("@")[0];
+    
+    const mentionTag = m.messages[0].message?.extendedTextMessage?.contextInfo?.participant
+    
+    const name = m.messages[0]['pushName'];
 
     const from = m.messages[0].key.remoteJid;
 
@@ -41,7 +45,7 @@ let MessageHandle = async (m, Neko,CommandList) => {
 
     let isCmd = body?.startsWith(prefix);
 
-    let isOwner = sender.includes(owner)
+    let isOwner = owner.includes(senderNumber);
 
     let groupMeta = isGroup ? await Neko.groupMetadata(from) : '';
  
@@ -99,7 +103,7 @@ let MessageHandle = async (m, Neko,CommandList) => {
               { quoted: m.messages[0] });
             break;
             case 'image':
-            await Neko.sendMessage(from, { image: {url:text}, caption: '© X-Neko' },
+            await Neko.sendMessage(from, { image: {url}, caption: '© X-Neko' },
               { quoted: m.messages[0] })
             break;
           case 'video':
@@ -138,35 +142,35 @@ let MessageHandle = async (m, Neko,CommandList) => {
     if ((from.split("@")[0]) === "status") return statusCollector(Neko, m.messages[0], { messageType, name });
 
     if (isGroup) {
-      
-      let checkGroup = await checkCreateGroup(groupId, groupName,Neko);
-      
-      if(isCmd) {
-      if (checkGroup.isSilent &&  !cmdName.includes("silent") ) return  
-  }
-      if(checkGroup.isBanned && !isOwner &&!isMe && isCmd)
-        return m.messages[0].reply("text",null,"*_This Group has been banned from using this bot._*");
-      
-     if(!isAdmin && groupLinkRegex.test(text) && checkGroup.isAntilink &&!isMe&& !isOwner) return await AntilinkFunc(
+     if(!isAdmin && groupLinkRegex.test(text) && Neko.antilinkGc(from) &&!isMe&& !isOwner) return await AntilinkFunc(
           Neko, m.messages[0],sender,
   from,text,isMeAdmin
             );
     }
 
     if (!isCmd) return;
-  
-    let senderNumber = sender?.includes(":")?sender.split(":")[0]:sender.split("@")[0]
-
-    if (Neko.banUsers?.includes(Number(senderNumber))) return m.messages[0].reply("text", null, `*_You are banned to use this bot_*...!`),await react("❌");
-
+    
+    if (isGroup) await checkCreateGroup( groupId, groupName, Neko );
+    
+    if (Neko.banUsers?.includes(senderNumber)) return m.messages[0].reply("text", null, `*_You are banned to use this bot_*...!`),await react("❌");
+    
+    if (Neko.silentUsers?.includes(senderNumber)) return;
+    
+    if (Neko.banGc?.includes(from) && !cmdName.includes("ban")) return m.messages[0].reply("text", null, `*_This group is banned to use this bot_*...!`),await react("❌");
+    
+    if (Neko.silentGc?.includes(from) && !cmdName.includes("silent")) return;
+    
     if (text?.endsWith(prefix)) return m.messages[0].reply("text", null, "*_I am Alive, Baka!!_*"),await react("😁");
 
  async function CommandRun() {
       try {
         if (CommandList.has(cmdName)) {
-    let Command = CommandList.get(cmdName)
-                await react(Command?.react || "💖")
-     let nul = await m.messages[0].reply("text", null, `*_Processing_*`)
+    let Command = CommandList.get(cmdName);
+     await react(Command?.react || "💖");
+     let nul = await m.messages[0].reply("text", null, `*_Processing_*`);
+          
+          if(!Neko.modUsers?.includes(senderNumber) && Command.category === "mods") return await m.messages[0].reply("edit", nul, `*_You are not allowed to use this command_*...!`);
+          
                 return await Command.run(Neko, m.messages[0], {
 nul,mentionTag, name, sender, gcMeta, gcName, args, 
 from,cmdName, body, quoted, text, viewonce, isGroup,
