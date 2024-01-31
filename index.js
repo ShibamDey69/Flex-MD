@@ -78,6 +78,7 @@ const setupBaileysSocket = async () => {
     );
     
   } catch (error) {
+    console.log(error);
     throw Error("Error setting up Baileys Socket");
   }
 };
