@@ -1,13 +1,15 @@
-# Build Stage
-FROM node:20-alpine as builder
+FROM node:20 as builder
 
 WORKDIR /build
 
-COPY package*.json ./
+COPY package*.json .
 
-RUN apk update && \
-    apk add --no-cache ffmpeg && \
-    npm install --production
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ffmpeg && \
+    rm -rf /var/lib/apt/lists/*
+    
+RUN npm install
 
 COPY Commands/ Commands/
 COPY utils/ utils/
@@ -17,9 +19,7 @@ COPY scraper/ scraper/
 COPY config.js config.js
 COPY index.js index.js
 
-# Runtime Stage
-FROM node:20-alpine
-
+FROM node:20 as runner
 WORKDIR /app
 
 COPY --from=builder /build .
