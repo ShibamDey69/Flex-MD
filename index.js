@@ -92,12 +92,12 @@ async function StartNeko() {
   }
 }
 
-StartNeko();
 
 app.get("/", (req, res) => {
   res.status(200).send("ok");
 });
 
 app.listen(PORT, () => {
+  StartNeko()
   console.log(`Server Started on Port ${PORT}....!!`);
 });
