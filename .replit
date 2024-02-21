@@ -13,3 +13,7 @@ channel = "stable-23_05"
 run = ["node", "index.js"]
 deploymentTarget = "cloudrun"
 ignorePorts = false
+
+[[ports]]
+localPort = 8000
+externalPort = 80

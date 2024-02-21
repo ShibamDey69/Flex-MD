@@ -44,9 +44,10 @@ export default {
           { sticker: await sticker.build() },
           { quoted: m },
         );
-        await fs.unlink(os.tmpdir() + `/sticker${i}.webp`);
+   fs.unlinkSync(os.tmpdir() + `/sticker${i}.webp`);
       }
     } catch (error) {
+      console.log(error);
       m.reply("edit", nul, "*_Error!!_*");
     }
   },
