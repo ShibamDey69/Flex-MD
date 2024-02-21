@@ -1,3 +1,5 @@
 {pkgs}: {
-  deps = [ ];
+  deps = [
+    pkgs.ffmpeg_6-full.bin
+   ];
 }

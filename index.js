@@ -23,6 +23,7 @@ const setupBaileysSocket = async () => {
     const { saveState, clearState, state } = await SingleAuth.useFileAuth(folder);
 
     const Neko = Baileys.makeWASocket({
+      printQRInTerminal: false,
       logger: pino({ level: "silent" }),
       browser: ["Chrome (Linux)", "chrome", ""],
       auth: state,
@@ -49,7 +50,6 @@ const setupBaileysSocket = async () => {
     Neko.silentGc = await Neko.Verify.silentGcLoad();
     Neko.antilinkGc = await Neko.Verify.antilinkGcLoad();
     Neko.modUsers.push(...owner);
-    
     console.log(`Loaded ${Neko.proUsers.length} Pro Users...!!`);
     console.log(`Loaded ${Neko.banUsers.length} Banned Users...!!`);
     console.log(`Loaded ${Neko.modUsers.length} Admin Users...!!`);

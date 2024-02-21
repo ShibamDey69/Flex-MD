@@ -5,7 +5,7 @@ import statusCollector from "./status.js";
 import AntilinkFunc from '../utils/antilink.js';
 import checkCreateGroup from '../utils/checkCreateGroup.js';
 import '../config.js';
-console.log(owner);
+
 let MessageHandle = async (m, Neko,CommandList) => {
   try {
     
@@ -123,13 +123,11 @@ let MessageHandle = async (m, Neko,CommandList) => {
               { quoted: m.messages[0] })
             break;
           case 'edit':
-            await Neko.relayMessage(from, {
-      protocolMessage: {
-         key: url.key ,
-         type: 14,
-        editedMessage: { conversation: text }
-              }
-            }, {})
+            
+            await Neko.sendMessage(from, {
+      text,
+      edit: url.key,
+    });
             break;
           default:
             break;
@@ -152,13 +150,7 @@ let MessageHandle = async (m, Neko,CommandList) => {
     
     if (isGroup) await checkCreateGroup( groupId, groupName, Neko );
     
-    if (Neko.banUsers?.includes(senderNumber)) return m.messages[0].reply("text", null, `*_You are banned to use this bot_*...!`),await react("❌");
     
-    if (Neko.silentUsers?.includes(senderNumber)) return;
-    
-    if (Neko.banGc?.includes(from) && !cmdName.includes("ban")) return m.messages[0].reply("text", null, `*_This group is banned to use this bot_*...!`),await react("❌");
-    
-    if (Neko.silentGc?.includes(from) && !cmdName.includes("silent")) return;
     
     if (text?.endsWith(prefix)) return m.messages[0].reply("text", null, "*_I am Alive, Baka!!_*"),await react("😁");
 
