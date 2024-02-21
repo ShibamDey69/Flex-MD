@@ -11,7 +11,6 @@ RUN apt-get update && \
     
 RUN npm install
 
-COPY Auth-Info/ Auth-Info/
 COPY Commands/ Commands/
 COPY utils/ utils/
 COPY Handlers/ Handlers/
