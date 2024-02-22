@@ -16,20 +16,35 @@ export default {
   run: async (Neko, m, { fetchF, nul, args, from }) => {
     try {
       let sticker_pack = await axios.get(
-        `https://weeb-api-v3.onrender.com/telesticker?q=${args}`,
+        `https://weeb-api-v3.onrender.com/telesticker?q=${
+          !args.includes("--")?args: args.split("--")[0] ?? args
+        }`,
         {
           responseType: "json",
         },
       );
-      let sticker_pack_data = sticker_pack.data.stickers;
+
+      let sticker_pack_data = sticker_pack.data.data.stickers;
       //console.log(sticker_pack_data)
       for (let i = 0; i < sticker_pack_data.length; i++) {
         let res = await axios.get(sticker_pack_data[i], {
           responseType: "arraybuffer",
         });
-        fs.writeFileSync(os.tmpdir() + `/sticker${i}.webp`, res.data);
+        
+        
+        if (args.includes("--image")) {
+          await Neko.sendMessage(
+            from,
+            {
+              image: res.data,
+            },
+            { quoted: m },
+          );
+        } else {
+          fs.writeFileSync(os.tmpdir() + `/sticker${i}.webp`, res.data);
         let da = fs.readFileSync(os.tmpdir() + `/sticker${i}.webp`);
-        let sticker = new Sticker(da, {
+          
+          let sticker = new Sticker(da, {
           pack: args,
           author: "NekoBot",
           type: StickerTypes.FULL,
@@ -38,13 +53,13 @@ export default {
           quality: 75,
           background: "transparent",
         });
-
-        await Neko.sendMessage(
-          from,
-          { sticker: await sticker.build() },
-          { quoted: m },
-        );
-   fs.unlinkSync(os.tmpdir() + `/sticker${i}.webp`);
+          await Neko.sendMessage(
+            from,
+            { sticker: await sticker.build() },
+            { quoted: m },
+          );
+    fs.unlinkSync(os.tmpdir() + `/sticker${i}.webp`);
+        }
       }
     } catch (error) {
       console.log(error);

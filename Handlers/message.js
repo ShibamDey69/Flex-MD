@@ -95,7 +95,7 @@ let MessageHandle = async (m, Neko,CommandList) => {
       try {
         switch (method) {
           case 'text':
-          return await Neko.sendMessage(from, { text:text },
+           await Neko.sendMessage(from, { text:text },
               { quoted: m.messages[0] });
             break;
           case 'mention':
@@ -107,11 +107,11 @@ let MessageHandle = async (m, Neko,CommandList) => {
               { quoted: m.messages[0] })
             break;
           case 'video':
-            await Neko.sendMessage(from, { video: { url: url }, caption: '© X-Neko' },
+            await Neko.sendMessage(from, { video: url, caption: '© X-Neko' },
               { quoted: m.messages[0] })
             break;
           case 'audio':
-            await Neko.sendMessage(from, { audio: { url: url }, mimetype: 'audio/mp4', ptt: false },
+            await Neko.sendMessage(from, { audio: url, mimetype: 'audio/mp4', ptt: true },
               { quoted: m.messages[0] })
             break;
           case 'sticker':

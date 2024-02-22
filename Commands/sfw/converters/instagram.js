@@ -1,3 +1,4 @@
+import axios from "axios";
 export default {
   name: "instagram",
   alias: ["ig"],
@@ -7,21 +8,21 @@ export default {
   usage: `${prefix}ig <URL>`,
   run: async (Neko, m, { args, fetchF,nul }) => {
     try {
-      if (!args) return m.reply('Input URL')
-      if (!args.includes('instagram.com')) return m.reply('Input valid instagram reel URL')
-      let ig = await fetchF(`https://weeb-api-v3.onrender.com/ig?q=${args}`)
+      if (!args) return m.reply("edit",nul,'Input URL')
+      if (!args.includes('instagram.com')) return m.reply("edit",nul,'Input valid instagram reel URL')
+      let ig = await axios.get(`https://weeb-api-v3.onrender.com/ig?q=${args}`)
 
       await m.reply('edit', nul, 'Downloading...!')
 
       if (ig.status !== 200)
         return await m.reply('edit', nul, yt.message)
-
+console.log(ig.data)
       let i = 0;
-      while (i <ig.data.length) {
-        if(!ig.data[i].url.includes('.jpg')) {
-        await m.reply("video", ig.data[i].url);
+      while (i <ig.data.data.length) {
+        if(!ig.data.data[i].type == 'video') {
+        await m.reply("video", ig.data.data[i].url);
         } else {
-        await m.reply("image", ig.data[i].url);
+        await m.reply("image", ig.data.data[i].url);
         }
         i++;
       }
