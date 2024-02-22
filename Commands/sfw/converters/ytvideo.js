@@ -16,7 +16,6 @@ export default {
       await m.reply('edit', nul, 'Downloading...')
       if (yt.status !== 200)
         return await m.reply('edit', nul, yt.message)
-console.log(yt.data.result[0].url)
       await m.reply("video", yt.data.dlink)
     } catch (error) {
       m.reply("edit", nul, '*_Error!!_*');
