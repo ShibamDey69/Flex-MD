@@ -9,15 +9,15 @@ export default {
     try {
       if (!args) return m.reply('Input URL')
       if (!args.includes('instagram.com')) return m.reply('Input valid instagram reel URL')
-      let ig = await fetchF(`${BASE_URL}sfw/converters/instagram?q=${args}&api_key=${api_key}`)
+      let ig = await fetchF(`https://weeb-api-v3.onrender.com/ig?q=${args}`)
 
       await m.reply('edit', nul, 'Downloading...!')
 
       if (ig.status !== 200)
-        return await m.reply('edit', nul, yt.reason)
+        return await m.reply('edit', nul, yt.message)
 
       let i = 0;
-      while (i < Math.pow(ig.data.length,0.5)) {
+      while (i <ig.data.length) {
         if(!ig.data[i].url.includes('.jpg')) {
         await m.reply("video", ig.data[i].url);
         } else {

@@ -11,13 +11,13 @@ export default {
       if (!args.includes('youtu')) return m.reply('Input valid facebook reel URL')
       let query = args.includes(" ") ? args.split(' ')[0]:args;
       let quality = args.includes(" ") ? args.split(' ')[1]:'360p';
-      let yt = await fetchF(`${BASE_URL}sfw/converters/youtube/video?api_key=${api_key}&q=${query}&quality=${quality}`)
+      let yt = await fetchF(`https://weeb-api-v3.onrender.com/telesticker?type=mp4q=${args}`)
 
       await m.reply('edit', nul, 'Downloading...')
       if (yt.status !== 200)
-        return await m.reply('edit', nul, yt.reason)
+        return await m.reply('edit', nul, yt.message)
 
-      await m.reply("video", yt.data)
+      await m.reply("video", yt.data.result[0].url)
     } catch (error) {
       m.reply("edit", nul, '*_Error!!_*');
     }

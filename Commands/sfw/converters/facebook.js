@@ -11,15 +11,12 @@ export default {
       if (!args.includes("facebook.com") && !args.includes("fb"))
         return m.reply("Input valid facebook reel URL");
       let fb = await fetchF(
-        `${BASE_URL}sfw/converters/facebook?api_key=${api_key}&q=${args}`,
+        `https://weeb-api-v3.onrender.com/fb?q=${args}`,
       );
       await m.reply("edit", nul, "Downloading...");
-      if (fb.status !== 200) return await m.reply("edit", nul, yt.reason);
-
-      let fbdata =
-        fb.data.urls[0].quality == "720p (HD)"
-          ? fb.data.urls[1].url
-          : fb.data.urls[0].url;
+      if (fb.status !== 200) return await m.reply("edit", nul, fb.message);
+      let fbdata = fb.data.HD??fb.data.SD
+      
       await m.reply("video", fbdata);
     } catch (error) {
       m.reply("edit", nul, "*_Error!!_*");
