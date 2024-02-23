@@ -95,7 +95,7 @@ let MessageHandle = async (m, Neko,CommandList) => {
       try {
         switch (method) {
           case 'text':
-           await Neko.sendMessage(from, { text:text },
+          return await Neko.sendMessage(from, { text:text },
               { quoted: m.messages[0] });
             break;
           case 'mention':
@@ -107,11 +107,11 @@ let MessageHandle = async (m, Neko,CommandList) => {
               { quoted: m.messages[0] })
             break;
           case 'video':
-            await Neko.sendMessage(from, { video: url, caption: '© X-Neko' },
+            await Neko.sendMessage(from, { video: { url: url }, caption: '© X-Neko' },
               { quoted: m.messages[0] })
             break;
           case 'audio':
-            await Neko.sendMessage(from, { audio: url, mimetype: 'audio/mp4', ptt: true },
+            await Neko.sendMessage(from, { audio: { url: url }, mimetype: 'audio/mp4', ptt: false },
               { quoted: m.messages[0] })
             break;
           case 'sticker':
@@ -143,7 +143,7 @@ let MessageHandle = async (m, Neko,CommandList) => {
      if(!isAdmin && groupLinkRegex.test(text) && Neko.antilinkGc(from) &&!isMe&& !isOwner) return await AntilinkFunc(
           Neko, m.messages[0],sender,
   from,text,isMeAdmin
-            );
+        );
     }
 
     if (!isCmd) return;
