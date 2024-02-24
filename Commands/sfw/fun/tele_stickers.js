@@ -50,7 +50,7 @@ export default {
           type: StickerTypes.FULL,
           categories: ["🤩", "🎉"],
           id: "12345",
-          quality: 75,
+          quality: 5,
           background: "transparent",
         });
           await Neko.sendMessage(
