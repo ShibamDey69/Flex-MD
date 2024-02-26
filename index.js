@@ -1,4 +1,7 @@
-import Baileys from "@whiskeysockets/baileys";
+import Baileys,{
+  makeCacheableSignalKeyStore,
+   makeInMemoryStore,
+} from "@whiskeysockets/baileys";
 import pino from "pino";
 import express from "express";
 const app = express();
@@ -12,6 +15,13 @@ import AuthenticationFromFile from "./utils/authFile.js";
 import checkCreateUser from "./utils/checkCreateUser.js";
 let folder = "Auth-Info";
 import './config.js';
+const useStore = false
+const MAIN_LOGGER = pino({ timestamp: () => `,"time":"${new Date().toJSON()}"` });
+import NodeCache from "node-cache";
+const logger = MAIN_LOGGER.child({});
+logger.level = "trace";
+
+
 
 const setupBaileysSocket = async () => {
   try {
@@ -19,15 +29,30 @@ const setupBaileysSocket = async () => {
       fs.mkdirSync(folder);
       console.log(`Auth info folder created....!!`);
     }
+    const store = useStore ? makeInMemoryStore({ logger }) : undefined;
+store?.readFromFile("./session");
+// Save every 1m
+setInterval(() => {
+  store?.writeToFile("./session");
+}, 10000 * 6);
+
+const msgRetryCounterCache = new NodeCache();
     const SingleAuth = new AuthenticationFromFile(folder);
     const { saveState, clearState, state } = await SingleAuth.useFileAuth(folder);
-
+    
     const Neko = Baileys.makeWASocket({
       printQRInTerminal: false,
       logger: pino({ level: "silent" }),
       browser: ["Chrome (Linux)", "chrome", ""],
-      auth: state,
+      auth: {
+         creds: state.creds,
+         keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "silent" })),
+      },
+      msgRetryCounterCache,
     });
+    store?.bind(Neko.ev);
+
+   Neko.ev.on("creds.update", saveState);
 
     if (!Neko.authState?.creds?.registered) {
       const phoneNumber = owner[1]?.replace(/[^0-9]/g, "");
@@ -60,7 +85,7 @@ const setupBaileysSocket = async () => {
     console.log(`Loaded ${Neko.antilinkGc.length} Antilink Groups...!!`);
     console.log(`${Neko.actionMap.size} Commands Loaded...!!`);
 
-    Neko.ev.on("creds.update", saveState);
+    
 
     Neko.ev.on(
       "connection.update",
