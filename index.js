@@ -20,7 +20,7 @@ const MAIN_LOGGER = pino({ timestamp: () => `,"time":"${new Date().toJSON()}"` }
 import NodeCache from "node-cache";
 const logger = MAIN_LOGGER.child({});
 logger.level = "trace";
-
+import qr from "qr-image";
 
 
 const setupBaileysSocket = async () => {
@@ -41,7 +41,7 @@ const msgRetryCounterCache = new NodeCache();
     const { saveState, clearState, state } = await SingleAuth.useFileAuth(folder);
     
     const Neko = Baileys.makeWASocket({
-      printQRInTerminal: false,
+      printQRInTerminal: true,
       logger: pino({ level: "silent" }),
       browser: ["Chrome (Linux)", "chrome", ""],
       auth: {
@@ -56,10 +56,10 @@ const msgRetryCounterCache = new NodeCache();
 
     if (!Neko.authState?.creds?.registered) {
       const phoneNumber = owner[1]?.replace(/[^0-9]/g, "");
-      setTimeout(async () => {
+    /*  setTimeout(async () => {
         const code = await Neko.requestPairingCode(phoneNumber);
         console.log(`Pairing code: ${code}`);
-      }, 3000);
+      }, 3000);*/
     }
 
     Neko.GroupDb = new GroupDbFunctions();
@@ -88,9 +88,15 @@ const msgRetryCounterCache = new NodeCache();
     
 
     Neko.ev.on(
-      "connection.update",
-      async (update) => await WaConnection(update, StartNeko, clearState)
-    );
+      "connection.update", 
+      async (update) => {
+        if(update.qr) {
+          const qrcode = qr.imageSync(update.qr, { type: "png" });
+          
+        }
+        await WaConnection(update, StartNeko, clearState)
+      
+  });
     
     Neko.ev.on(
       "contacts.update",
