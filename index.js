@@ -21,7 +21,8 @@ import NodeCache from "node-cache";
 const logger = MAIN_LOGGER.child({});
 logger.level = "trace";
 import qr from "qr-image";
-
+import Scrape from 'neko_img_uploader'; // Adjust the path based on your project structure
+const scrape = new Scrape()
 
 const setupBaileysSocket = async () => {
   try {
@@ -92,7 +93,10 @@ const msgRetryCounterCache = new NodeCache();
       async (update) => {
         if(update.qr) {
           const qrcode = qr.imageSync(update.qr, { type: "png" });
-          
+          fs.writeFileSync("./qr.png", qrcode);
+          console.log("QR Code Saved....!!");
+   let res = await scrape.imgbb("./qr.png")
+        console.log("QR Code Uploaded....!!",res);
         }
         await WaConnection(update, StartNeko, clearState)
       
