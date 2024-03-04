@@ -20,7 +20,10 @@ export default {
         quotedMessType === "imageMessage" ||
         quotedMessType === "videoMessage"
       ) {
-        let media = await downloadMediaMessage(quotedMessage, "buffer", {});
+        
+        let media = await downloadMediaMessage(quotedMessage, "buffer", {},{
+          reuploadRequest: Neko.updateMediaMessage
+        });
 
         let sticker = new Sticker(media, {
           pack: "Neko-MD",
@@ -35,7 +38,7 @@ export default {
         await Neko.sendMessage(
           from,
           { sticker: stickerBuffer },
-          { quoted: m.messages[0] },
+          { quoted: m },
         );
       } else {
         if (messageType === "imageMessage" || messageType === "videoMessage") {
@@ -76,6 +79,7 @@ export default {
         }
       }
     } catch (e) {
+      console.log(e);
       m.reply("edit", nul, "*_Error!!_*");
     }
   },

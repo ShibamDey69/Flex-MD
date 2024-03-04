@@ -8,7 +8,7 @@ import '../config.js';
 
 let MessageHandle = async (m, Neko,CommandList) => {
   try {
-    console.log(m)
+    
     const messageType = getContentType(m.messages[0].message);
 
     const isMe = m.messages[0].key.fromMe;
@@ -67,9 +67,11 @@ let MessageHandle = async (m, Neko,CommandList) => {
     
     let timeoutDelay = 5000;
 
-    let quotedMessage = m.messages[0].message?.extendedTextMessage?.contextInfo?.quotedMessage
+    let quotedMessage = {
+      message: m.messages[0].message?.extendedTextMessage?.contextInfo?.quotedMessage
+    }
 
-    let quotedMessType = getContentType(quotedMessage)
+    let quotedMessType = getContentType(quotedMessage.message)
       
     let fetchF = async (url, method = "json") => {
       try {
