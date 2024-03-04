@@ -8,7 +8,7 @@ import '../config.js';
 
 let MessageHandle = async (m, Neko,CommandList) => {
   try {
-    
+
     const messageType = getContentType(m.messages[0].message);
 
     const isMe = m.messages[0].key.fromMe;
@@ -54,7 +54,7 @@ let MessageHandle = async (m, Neko,CommandList) => {
     let groupId = isGroup ? groupMeta.id : '';
 
     let Admins = isGroup? groupMeta.participants.filter((v) => v.admin === 'admin').map(v => v.id):[];
-    
+
     let isAdmin = isGroup? Admins.includes(sender):false;
     
     let isMeAdmin =  Admins?.includes(`${global.owner}@s.whatsapp.net`);
