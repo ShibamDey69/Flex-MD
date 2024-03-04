@@ -17,7 +17,7 @@ export default {
 
       if (
         isQuoted &&
-        quotedMessType === "imageMessage" &&
+        quotedMessType === "imageMessage" ||
         quotedMessType === "videoMessage"
       ) {
         let media = await downloadMediaMessage(quotedMessage, "buffer", {});
