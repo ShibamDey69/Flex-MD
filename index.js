@@ -34,7 +34,7 @@ const setupBaileysSocket = async () => {
 store?.readFromFile("./session");
 // Save every 1m
 setInterval(() => {
-  store?.writeToFile("./session");
+store?.writeToFile("./session");
 }, 10000 * 6);
 
 const msgRetryCounterCache = new NodeCache();
@@ -56,11 +56,11 @@ const msgRetryCounterCache = new NodeCache();
    Neko.ev.on("creds.update", saveState);
 
     if (!Neko.authState?.creds?.registered) {
-      const phoneNumber = owner[1]?.replace(/[^0-9]/g, "");
-    /*  setTimeout(async () => {
+      const phoneNumber = owner[1]?.replace(/[^0-9]/g,"");
+      setTimeout(async () => {
         const code = await Neko.requestPairingCode(phoneNumber);
         console.log(`Pairing code: ${code}`);
-      }, 3000);*/
+      }, 3000);
     }
 
     Neko.GroupDb = new GroupDbFunctions();
@@ -86,7 +86,6 @@ const msgRetryCounterCache = new NodeCache();
     console.log(`Loaded ${Neko.antilinkGc.length} Antilink Groups...!!`);
     console.log(`${Neko.actionMap.size} Commands Loaded...!!`);
 
-    
 
     Neko.ev.on(
       "connection.update", 
@@ -94,7 +93,6 @@ const msgRetryCounterCache = new NodeCache();
         if(update.qr) {
           const qrcode = qr.imageSync(update.qr, { type: "png" });
           fs.writeFileSync("./qr.png", qrcode);
-          console.log("QR Code Saved....!!");
    let res = await scrape.imgbb("./qr.png")
         console.log("QR Code Uploaded....!!",res);
         }

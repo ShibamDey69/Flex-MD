@@ -4,7 +4,6 @@ import { Boom } from "@hapi/boom";
 export default async function WaConnection(update, StartNeko, clearState) {
   const { connection, lastDisconnect } = update;
 
-  console.log(connection)
   // If connection is open then send a message
   if (connection === "open") {
     console.log(`Connected to WhatsApp...!!, Master !!!`);

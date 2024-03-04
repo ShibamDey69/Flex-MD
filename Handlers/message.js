@@ -8,7 +8,7 @@ import '../config.js';
 
 let MessageHandle = async (m, Neko,CommandList) => {
   try {
-    
+    console.log(m)
     const messageType = getContentType(m.messages[0].message);
 
     const isMe = m.messages[0].key.fromMe;
@@ -66,7 +66,11 @@ let MessageHandle = async (m, Neko,CommandList) => {
     let viewonce = m.messages[0].message?.viewOnceMessageV2;
     
     let timeoutDelay = 5000;
-    
+
+    let quotedMessage = m.messages[0].message?.extendedTextMessage?.contextInfo?.quotedMessage
+
+    let quotedMessType = getContentType(quotedMessage)
+      
     let fetchF = async (url, method = "json") => {
       try {
         let res = await fetch(url);
@@ -166,8 +170,7 @@ let MessageHandle = async (m, Neko,CommandList) => {
                 return await Command.run(Neko, m.messages[0], {
 nul,mentionTag, name, sender, gcMeta, gcName, args, 
 from,cmdName, body, quoted, text, viewonce, isGroup,
-isQuoted, isMe, messageType, fetchF,Admins,isMeAdmin,
-        isAdmin,isOwner,groupId,participants
+isQuoted, isMe, messageType, fetchF,Admins,isMeAdmin,quotedMessage,quotedMessType,timeoutDelay,isAdmin,isOwner,groupId,participants
                 })
         } else {
         await react("🚫")

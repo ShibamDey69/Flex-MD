@@ -1,8 +1,5 @@
 import { Sticker, StickerTypes } from "wa-sticker-formatter"; // ES6
 import { downloadMediaMessage } from "@whiskeysockets/baileys";
-import fs from "fs";
-import os from "os";
-
 
 export default {
   name: "sticker",
@@ -10,35 +7,76 @@ export default {
   description: "Converts image to sticker",
   category: "sfw",
   usage: "sticker",
-  run: async (Neko,m, {args,from,messageType,nul}) => {
+  run: async (
+    Neko,
+    m,
+    { args, from, messageType, nul, isQuoted, quotedMessType, quotedMessage },
+  ) => {
     try {
-    m.reply("edit",nul,"Please wait..!!")
-      if(messageType === "imageMessage" || messageType === "videoMessage"||messageType) {
-        
-        const buffer = await downloadMediaMessage(m, "buffer", {}, {
-          reuploadRequest: Neko.updateMediaMessage,
-        });
-        const sticker = new Sticker(buffer, {
+      m.reply("edit", nul, "Please wait..!!");
+
+      if (
+        isQuoted &&
+        quotedMessType === "imageMessage" &&
+        quotedMessType === "videoMessage"
+      ) {
+        let media = await downloadMediaMessage(quotedMessage, "buffer", {});
+
+        let sticker = new Sticker(media, {
           pack: "Neko-MD",
           author: "shibam",
           type: StickerTypes.FULL,
           categories: ["🤩", "🎉"],
           id: "12345",
-          quality: 5,
+          quality: 3,
           background: "transparent",
         });
-        const stickerBuffer = await sticker.build();
-        
-        await Neko.sendMessage(from,{
-         sticker: stickerBuffer,
-        },{quoted:m})
-        console.log(stickerBuffer)
+        let stickerBuffer = await sticker.toBuffer();
+        await Neko.sendMessage(
+          from,
+          { sticker: stickerBuffer },
+          { quoted: m.messages[0] },
+        );
       } else {
-      m.reply("edit",nul,"Please send an image or short video with caption"+prefix+"sticker/s")
-        m.reply("text",null,messageType)
+        if (messageType === "imageMessage" || messageType === "videoMessage") {
+          const buffer = await downloadMediaMessage(
+            m,
+            "buffer",
+            {},
+            {
+              reuploadRequest: Neko.updateMediaMessage,
+            },
+          );
+          const sticker = new Sticker(buffer, {
+            pack: "Neko-MD",
+            author: "shibam",
+            type: StickerTypes.FULL,
+            categories: ["🤩", "🎉"],
+            id: "12345",
+            quality: 5,
+            background: "transparent",
+          });
+          const stickerBuffer = await sticker.build();
+
+          await Neko.sendMessage(
+            from,
+            {
+              sticker: stickerBuffer,
+            },
+            { quoted: m },
+          );
+        } else {
+          m.reply(
+            "edit",
+            nul,
+            "Please send an image or short video with caption" +
+              prefix +
+              "sticker/s",
+          );
+        }
       }
     } catch (e) {
-       m.reply("edit",nul,"*_Error!!_*")
+      m.reply("edit", nul, "*_Error!!_*");
     }
-  }
-}
+  },
+};
