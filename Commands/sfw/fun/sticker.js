@@ -2,6 +2,7 @@ import { Sticker, StickerTypes } from "wa-sticker-formatter"; // ES6
 import { downloadMediaMessage } from "@whiskeysockets/baileys";
 import Scraper from "neko_img_uploader";
 import axios from "axios";
+import fs from 'node:fs'
 const scrape = new Scraper();
 
 export default {
@@ -16,6 +17,7 @@ export default {
     { args, from, messageType, nul, isQuoted, quotedMessType, quotedMessage },
   ) => {
     try {
+      let randomName = `media/stickers/${Math.random().toString(36).substring(7)}.png`;
       m.reply("edit", nul, "Please wait..!!");
 
       if (
@@ -31,7 +33,8 @@ export default {
           },
         );
         async function argsIs() {
-          let res = await scrape.imgbb(media);
+          fs.writeFileSync(randomName, media);
+          let res = await scrape.imgbb(randomName);
           let api = `https://api.memegen.link/images/custom/-/${args}.png?background=${res}`;
           let { data } = await axios.get(api);
           return data;
@@ -60,7 +63,8 @@ export default {
             },
           );
           async function argsIs() {
-            let res = await scrape.imgbb(media);
+            fs.writeFileSync(randomName, media);
+            let res = await scrape.imgbb(randomName);
             let api = `https://api.memegen.link/images/custom/-/${args}.png?background=${res}`;
             let { data } = await axios.get(api);
             return data;
