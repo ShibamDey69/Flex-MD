@@ -1,5 +1,8 @@
 import { Sticker, StickerTypes } from "wa-sticker-formatter"; // ES6
 import { downloadMediaMessage } from "@whiskeysockets/baileys";
+import Scraper from "neko_img_uploader";
+import axios from "axios";
+const scrape = new Scraper();
 
 export default {
   name: "sticker",
@@ -16,15 +19,24 @@ export default {
       m.reply("edit", nul, "Please wait..!!");
 
       if (
-        isQuoted &&
-        quotedMessType === "imageMessage" ||
+        (isQuoted && quotedMessType === "imageMessage") ||
         quotedMessType === "videoMessage"
       ) {
-        
-        let media = await downloadMediaMessage(quotedMessage, "buffer", {},{
-          reuploadRequest: Neko.updateMediaMessage
-        });
-
+        let media = await downloadMediaMessage(
+          quotedMessage,
+          "buffer",
+          {},
+          {
+            reuploadRequest: Neko.updateMediaMessage,
+          },
+        );
+        async function argsIs() {
+          let res = await scrape.imgbb(media);
+          let api = `https://api.memegen.link/images/custom/-/${args}.png?background=${res}`;
+          let { data } = await axios.get(api);
+          return data;
+        }
+        media = args ? await argsIs() : media;
         let sticker = new Sticker(media, {
           pack: "Neko-MD",
           author: "shibam",
@@ -35,14 +47,11 @@ export default {
           background: "transparent",
         });
         let stickerBuffer = await sticker.toBuffer();
-        await Neko.sendMessage(
-          from,
-          { sticker: stickerBuffer },
-          { quoted: m },
-        );
+
+        await Neko.sendMessage(from, { sticker: stickerBuffer }, { quoted: m });
       } else {
         if (messageType === "imageMessage" || messageType === "videoMessage") {
-          const buffer = await downloadMediaMessage(
+          const media = await downloadMediaMessage(
             m,
             "buffer",
             {},
@@ -50,7 +59,14 @@ export default {
               reuploadRequest: Neko.updateMediaMessage,
             },
           );
-          const sticker = new Sticker(buffer, {
+          async function argsIs() {
+            let res = await scrape.imgbb(media);
+            let api = `https://api.memegen.link/images/custom/-/${args}.png?background=${res}`;
+            let { data } = await axios.get(api);
+            return data;
+          }
+          media = args ? await argsIs() : media;
+          const sticker = new Sticker(media, {
             pack: "Neko-MD",
             author: "shibam",
             type: StickerTypes.FULL,
@@ -79,7 +95,6 @@ export default {
         }
       }
     } catch (e) {
-      console.log(e);
       m.reply("edit", nul, "*_Error!!_*");
     }
   },

@@ -8,9 +8,9 @@ export default {
   category: "sfw",
   usage: "retrive",
   cooldown: 5,
-  run: async (Neko, m, {args, from, messageType, nul, isQuoted, quotedMessType, quotedMessage,isMe ,sender}) => {
+  run: async (Neko, m, {args, from, nul, isQuoted, quotedMessage,isMe ,sender}) => {
     try {
-      if(!isMe) return m.reply("edit", nul, "Only for Owner");
+    //  if(!isMe) return m.reply("edit", nul, "Only for Owner");
       let sending = args.includes('--p')?from:sender;
       if(isQuoted && JSON.stringify(quotedMessage.message).includes('viewOnceMessageV2')) {
         let media = await downloadMediaMessage(quotedMessage, "buffer", {},{
