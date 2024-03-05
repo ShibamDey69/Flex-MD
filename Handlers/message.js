@@ -53,11 +53,11 @@ let MessageHandle = async (m, Neko,CommandList) => {
     
     let groupId = isGroup ? groupMeta.id : '';
 
-    let Admins = isGroup? groupMeta.participants.filter((v) => v.admin === 'admin').map(v => v.id):[];
+    let Admins = isGroup? groupMeta.participants.filter((v) => v.admin === 'admin' || v.admin === 'superadmin').map(v => v.id):[];
 
-    let isAdmin = isGroup? Admins.includes(sender):false;
     
     let isMeAdmin =  Admins?.includes(`${global.owner}@s.whatsapp.net`);
+    let isAdmin =  isMe?isMeAdmin:Admins?.includes(sender);
     
     let groupName = isGroup ? groupMeta.subject : 'Private Chat'
 
