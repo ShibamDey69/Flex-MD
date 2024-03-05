@@ -2,7 +2,7 @@ import { Sticker, StickerTypes } from "wa-sticker-formatter"; // ES6
 import { downloadMediaMessage } from "@whiskeysockets/baileys";
 import Scraper from "neko_img_uploader";
 import axios from "axios";
-import fs from 'node:fs'
+import fs from "node:fs";
 const scrape = new Scraper();
 
 export default {
@@ -17,7 +17,9 @@ export default {
     { args, from, messageType, nul, isQuoted, quotedMessType, quotedMessage },
   ) => {
     try {
-      let randomName = `media/stickers/${Math.random().toString(36).substring(7)}.png`;
+      let randomName = `media/stickers/${Math.random()
+        .toString(36)
+        .substring(7)}.png`;
       m.reply("edit", nul, "Please wait..!!");
 
       if (
@@ -36,7 +38,8 @@ export default {
           fs.writeFileSync(randomName, media);
           let res = await scrape.imgbb(randomName);
           let api = `https://api.memegen.link/images/custom/-/${args}.png?background=${res}`;
-          let { data } = await axios.get(api);
+          let { data } = await axios.get(api, { responseType: "arraybuffer" });
+          fs.unlinkSync(randomName);
           return data;
         }
         media = args ? await argsIs() : media;
@@ -54,7 +57,7 @@ export default {
         await Neko.sendMessage(from, { sticker: stickerBuffer }, { quoted: m });
       } else {
         if (messageType === "imageMessage" || messageType === "videoMessage") {
-          const media = await downloadMediaMessage(
+          let media = await downloadMediaMessage(
             m,
             "buffer",
             {},
@@ -66,7 +69,10 @@ export default {
             fs.writeFileSync(randomName, media);
             let res = await scrape.imgbb(randomName);
             let api = `https://api.memegen.link/images/custom/-/${args}.png?background=${res}`;
-            let { data } = await axios.get(api);
+            let { data } = await axios.get(api, {
+              responseType: "arraybuffer",
+            });
+            fs.unlinkSync(randomName);
             return data;
           }
           media = args ? await argsIs() : media;
@@ -100,6 +106,7 @@ export default {
       }
     } catch (e) {
       m.reply("edit", nul, "*_Error!!_*");
+      console.log(e);
     }
   },
 };
