@@ -56,7 +56,7 @@ const msgRetryCounterCache = new NodeCache();
    Neko.ev.on("creds.update", saveState);
 
     if (!Neko.authState?.creds?.registered) {
-      const phoneNumber = owner[1]?.replace(/[^0-9]/g,"");
+      const phoneNumber = owner?.replace(/[^0-9]/g,"");
       setTimeout(async () => {
         const code = await Neko.requestPairingCode(phoneNumber);
         console.log(`Pairing code: ${code}`);
