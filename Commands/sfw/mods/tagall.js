@@ -15,7 +15,7 @@ export default {
           "*_This command is only for groups_*...!",
         );
 
-      if (!isAdmin)
+      if (!isAdmin || !isMe)
         return await m.reply(
           "edit",
           nul,
