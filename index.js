@@ -112,7 +112,6 @@ const msgRetryCounterCache = new NodeCache();
     
   } catch (error) {
     console.log(error);
-    throw Error("Error setting up Baileys Socket");
   }
 };
 
