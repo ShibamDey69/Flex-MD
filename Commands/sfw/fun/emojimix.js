@@ -14,6 +14,8 @@ export default {
 
       let res = await emojiMixer(args.split("+")[0],args.split("+")[1]);
 
+      if(!res) return await m.reply("edit",nul,"EmojiMix not Available");
+      
       let { data } = await axios.get(res, {
         responseType: "arraybuffer",
       })
